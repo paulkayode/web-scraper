@@ -9,6 +9,11 @@ function normaliseURL(url) {
     return url.slice(i,j);
 }
 
+function  getUrlsFromHtml(htmlBody){
+
+}
+
 module.exports = {
-    normaliseURL
+    normaliseURL,
+    getUrlsFromHtml
 }
