@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/segunkayode1/web-scraper/issues"
   },
-  "homepage": "https://github.com/segunkayode1/web-scraper#readme"
+  "homepage": "https://github.com/segunkayode1/web-scraper#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
