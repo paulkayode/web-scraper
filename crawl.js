@@ -10,12 +10,17 @@ function normaliseURL(url) {
     return url.slice(i,j);
 }
 
-function  getUrlsFromHtml(htmlBody){
+function  getUrlsFromHtml(htmlBody,baseUrl){
     dom = new JSDOM(htmlBody);
     const anchors = dom.window.document.querySelectorAll('a');
     const ans = []
     for(let i = 0; i < anchors.length; i++){
-        ans.push(anchors[i].getAttribute('href'));
+        let url = anchors[i].getAttribute('href');
+        if(url[0] !== '/'){
+            ans.push(url);
+        }else{
+            ans.push(baseUrl + url)
+        }
     }
     return ans;
 }
