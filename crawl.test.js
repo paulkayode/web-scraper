@@ -49,7 +49,7 @@ test('Testing get Url from Html', () =>{
       
     for( let [testinput, expectedResult] of Object.entries(testCases)){
       const actualResult = getUrlsFromHtml(testinput);
-      expect(actualResult).toBe(expectedResult);
+      expect(actualResult).toEqual(expectedResult);
     }
 
       

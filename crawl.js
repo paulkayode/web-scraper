@@ -1,3 +1,4 @@
+const {JSDOM} = require('jsdom');
 
 function normaliseURL(url) {
     let i = 0;
@@ -10,7 +11,13 @@ function normaliseURL(url) {
 }
 
 function  getUrlsFromHtml(htmlBody){
-
+    dom = new JSDOM(htmlBody);
+    const anchors = dom.window.document.querySelectorAll('a');
+    const ans = []
+    for(let i = 0; i < anchors.length; i++){
+        ans.push(anchors[i].getAttribute('href'));
+    }
+    return ans;
 }
 
 module.exports = {
