@@ -25,7 +25,30 @@ function  getUrlsFromHtml(htmlBody,baseUrl){
     return ans;
 }
 
+async function crawlPage(url){
+    try{
+    const response = await fetch(url,
+        {
+            method: 'GET',
+            mode : 'cors'
+        })
+    if(response.status >= 400){
+        console.log(`Error error-code: ${response.status}`);
+        return;
+    }
+
+    if(!response.headers.get('content-type').includes('text/html')){
+        console.log(`Error content-type: ${response.headers.get('content-type')}`);
+        return;
+    }
+    console.log(await response.text());
+  }catch(err){
+    console.log(err.message);
+  }
+}
+
 module.exports = {
     normaliseURL,
-    getUrlsFromHtml
+    getUrlsFromHtml,
+    crawlPage
 }
