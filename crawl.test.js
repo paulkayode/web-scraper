@@ -1,12 +1,34 @@
 const crawl = require('./crawl');
 const { normaliseURL, getUrlsFromHtml}= crawl
 
-test('Testing Normalise Url',()=>{
-     const testUrls = ['https://blog.boot.dev/path/', 'https://blog.boot.dev/path', 'http://blog.boot.dev/path/','http://blog.boot.dev/path','blog.boot.dev','blog.boot.dev/path']
-     const expected = 'blog.boot.dev'
-     for(let testUrl of testUrls){
-        expect(normaliseURL(testUrl)).toBe(expected);
-     }
+test('Testing Normalise Url', () => {
+   const testUrls = [
+      'https://blog.boot.dev/path/',
+      'https://blog.boot.dev/path',
+      'http://blog.boot.dev/path/',
+      'http://blog.boot.dev/path',
+      'https://blog.boot.dev',
+      'https://blog.boot.dev/path',
+      'https://example.com',
+      'https://example.com/path1',
+      'https://example.com/path2',
+      'https://example.com/path3',
+   ];
+   const expected = [
+      'blog.boot.dev/path',
+      'blog.boot.dev/path',
+      'blog.boot.dev/path',
+      'blog.boot.dev/path',
+      'blog.boot.dev',
+      'blog.boot.dev/path',
+      'example.com',
+      'example.com/path1',
+      'example.com/path2',
+      'example.com/path3',
+   ];
+   for (let i = 0; i < testUrls.length; i++) {
+      expect(normaliseURL(testUrls[i])).toBe(expected[i]);
+   }
 });
 
 test('Testing get Url from Html', () =>{

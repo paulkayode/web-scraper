@@ -1,17 +1,16 @@
 const {JSDOM} = require('jsdom');
 
 function normaliseURL(url) {
-    let i = 0;
-    while(url[i] !== '/' && i < url.length)i++;
-    if(i >= url.length || (i +1 < url.length && url[i+1] !== '/')) i = 0;
-    while(url[i] === '/' && i < url.length)i++;
-    let j = i;
-    while(url[j] !== '/' &&  j < url.length)j++;
-    return url.slice(i,j);
+    let urlobject = new URL(url);
+    let fullUrl = `${urlobject.hostname}${urlobject.pathname}`;
+    if(fullUrl.length > 0 && fullUrl[fullUrl.length -1] == '/'){
+      return fullUrl.slice(0,-1);
+    }
+    return fullUrl;
 }
 
-function  getUrlsFromHtml(htmlBody,baseUrl){
-    dom = new JSDOM(htmlBody);
+function  getUrlsFromHtml(htmlBody, baseUrl){
+    const dom = new JSDOM(htmlBody);
     const anchors = dom.window.document.querySelectorAll('a');
     const ans = []
     for(let i = 0; i < anchors.length; i++){
@@ -19,32 +18,52 @@ function  getUrlsFromHtml(htmlBody,baseUrl){
         if(url[0] !== '/'){
             ans.push(url);
         }else{
-            ans.push(baseUrl + url)
+           ans.push(new URL(url,baseUrl).href)
         }
     }
     return ans;
 }
 
-async function crawlPage(url){
+async function crawlPage(url,currentUrl, pages){
+    const currUrl = new URL(currentUrl);
+    const baseUrl = new URL(url);
+    if(currUrl.hostname !== baseUrl.hostname){
+        return pages;
+    }
+    const normalisedUrl = normaliseURL(currentUrl)
+    if(normalisedUrl in pages){
+      if(currentUrl !== url){
+        pages[normalisedUrl]++;
+      }
+      return pages;
+    }
+    if(currentUrl === url){
+      pages[normalisedUrl] = 0;
+    }else{
+      pages[normalisedUrl] = 1;
+    }
+    console.log("crawling " + currentUrl);
+    let htmlBody = '';
     try{
-    const response = await fetch(url,
-        {
-            method: 'GET',
-            mode : 'cors'
-        })
+    const response = await fetch(currentUrl)
     if(response.status >= 400){
         console.log(`Error error-code: ${response.status}`);
-        return;
+        return pages;
     }
-
     if(!response.headers.get('content-type').includes('text/html')){
         console.log(`Error content-type: ${response.headers.get('content-type')}`);
-        return;
+        return pages;
     }
-    console.log(await response.text());
+    htmlBody = await response.text();
   }catch(err){
     console.log(err.message);
-  }
+    return pages;
+}
+    const listUrls = getUrlsFromHtml(htmlBody,url);
+    for(let i = 0; i < listUrls.length; i++){
+        pages = await crawlPage(url, listUrls[i], pages);
+    }
+    return pages;
 }
 
 module.exports = {
